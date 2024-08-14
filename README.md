@@ -1,7 +1,5 @@
 # Tips Booster
 
-This is a simple Python script designed to automate the process of sending HTTP requests through various proxies to simulate views on a specific URL.
-
 ## Features
 
 - **Proxy Fetching**: Automatically fetches a list of free proxies from a public API.
