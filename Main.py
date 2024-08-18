@@ -46,7 +46,7 @@ def send(proxy, url):
                 with view_lock:
                     view += 1
                 update_title()
-                print(f"{Fore.CYAN}Using proxy {proxy} | Status code {response.status_code} | Total views: {view} | Time: {end - start:.2f} seconds{Style.RESET_ALL}")
+                print(f"{Fore.CYAN}Using proxy {proxy:19} | Status code {response.status_code} | Total views: {view} | Time: {end - start:.2f} seconds{Style.RESET_ALL}")
             else:
                 print(f"{Fore.YELLOW}Proxy {proxy} | status code {response.status_code}{Style.RESET_ALL}")
         except requests.exceptions.RequestException:
@@ -59,8 +59,12 @@ def send(proxy, url):
 def get_views(url):
     response = requests.get(url)
     if response.status_code == 200:
-        start_views = re.search(r'<text x="102.5" y="14">([\d,]+)</text>', response.text).group(1)
+        try:
+            start_views = re.search(r'<text x="102.5" y="14">([\d,]+)</text>', response.text).group(1)
+        except:
+            start_views = 0
         print(f"{Fore.GREEN}Starting views: {start_views}{Style.RESET_ALL}")
+        return(start_views)
     else:
         print(f"{Fore.RED}Failed to get views: {response.status_code}{Style.RESET_ALL}")
 
@@ -83,11 +87,12 @@ if __name__ == "__main__":
     view_counter_url = input("Enter view counter url: ")
 
     try:
-        get_views(view_counter_url)
+        update_title()
+        view = get_views(view_counter_url)
         time.sleep(3)
         fetch_proxies()
-        update_title()
         print(f"{Fore.GREEN}Starting {len(proxies_list)} threads.{Style.RESET_ALL}")
         start_threads(view_counter_url)
+        input(f"{Fore.GREEN}Press Enter to exit...{Style.RESET_ALL}")
     except Exception:
         print(f"{Fore.RED}An unexpected error occurred.{Style.RESET_ALL}")
